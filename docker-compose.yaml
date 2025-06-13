@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    image: wayshub-fe
+    image: wayshub-frontend:1.0
     container_name: wayshub-fe
     restart: always
     stdin_open: true
