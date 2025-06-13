@@ -35,20 +35,22 @@ pipeline{
             }
         }
 
-        stage ('test the code'){
-            steps{
-                sshagent([secret]){
-                    sh """ssh -o StrictHostKeyChecking=no ${server} << EOF
-                        cd ${directory}
-                        docker run -d --name testcode -p 3001:3000 ${namebuild}
-                        wget --spider localhost:3001
-                        docker stop testcode
-                        docker rm -f testcode
-                        echo "Selesai Testing!"
-                        exit
-                    EOF"""
-                }
-            }
+	stage ('test the code'){
+    	   steps{
+               sshagent([secret]){
+                   sh """ssh -o StrictHostKeyChecking=no ${server} << EOF
+                   cd ${directory}
+                   docker run -d --name testcode -p 3001:3000 ${namebuild}
+                   sleep 5
+                   docker logs testcode
+                   wget --spider localhost:3001 || (echo "App gagal dijalankan" && exit 1)
+                   docker stop testcode
+                   docker rm -f testcode
+                   echo "Selesai Testing!"
+                   exit
+                   EOF"""
+               }
+           }
         }
 
         stage ('deploy'){
